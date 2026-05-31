@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IFC Viewer | Nhat Tran Portfolio</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg:     #0a0e1a;
+      --card:   #161c2d;
+      --border: #1e2740;
+      --accent: #4f8ef7;
+      --text:   #e2e8f0;
+      --text2:  #94a3b8;
+      --green:  #10b981;
+      --red:    #ef4444;
+    }
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* TOP BAR */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      z-index: 10;
+      flex-shrink: 0;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+    .back-btn {
+      display: flex; align-items: center; gap: 8px;
+      color: var(--text2); text-decoration: none; font-size: 0.85rem;
+      padding: 6px 14px; border: 1px solid var(--border); border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .back-btn:hover { color: var(--accent); border-color: var(--accent); }
+    .topbar-title { font-size: 0.95rem; font-weight: 700; }
+    .topbar-title span { color: var(--accent); }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .model-name {
+      font-size: 0.8rem; color: var(--text2);
+      padding: 4px 12px; background: var(--bg);
+      border: 1px solid var(--border); border-radius: 20px;
+      max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .load-btn {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--accent); color: #fff; border: none;
+      padding: 8px 20px; border-radius: 7px; font-size: 0.85rem;
+      font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s;
+    }
+    .load-btn:hover { background: #3b7de8; transform: translateY(-1px); }
+
+    /* MAIN */
+    .main { display: flex; flex: 1; overflow: hidden; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 230px; background: var(--card);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto;
+    }
+    .sidebar-section { padding: 16px; border-bottom: 1px solid var(--border); }
+    .sidebar-label {
+      font-size: 0.7rem; font-weight: 700; color: var(--text2);
+      letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px;
+    }
+    .info-row { display: flex; justify-content: space-between; padding: 5px 0; }
+    .info-row .key { font-size: 0.78rem; color: var(--text2); }
+    .info-row .val { font-size: 0.78rem; color: var(--text); font-weight: 600; }
+    .val.green { color: var(--green); }
+    .val.red   { color: var(--red); }
+    .control-item { display: flex; align-items: center; gap: 10px; padding: 6px 0; cursor: pointer; }
+    .kbd {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 4px; padding: 2px 8px;
+      font-size: 0.72rem; color: var(--accent); font-family: monospace; white-space: nowrap;
+    }
+    .control-desc { font-size: 0.78rem; color: var(--text2); }
+
+    /* CANVAS */
+    .canvas-wrapper { flex: 1; position: relative; overflow: hidden; }
+    #viewer-canvas { display: block; width: 100%; height: 100%; }
+
+    /* DROP ZONE */
+    #drop-zone {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 20px;
+      background: var(--bg); z-index: 5; transition: opacity 0.4s;
+    }
+    #drop-zone.hidden { opacity: 0; pointer-events: none; }
+    .drop-box {
+      border: 2px dashed var(--border); border-radius: 16px;
+      padding: 40px 60px; text-align: center; transition: all 0.2s; cursor: pointer;
+    }
+    .drop-box:hover, .drop-box.dragover { border-color: var(--accent); background: rgba(79,142,247,0.05); }
+    .drop-icon { font-size: 4rem; color: var(--border); margin-bottom: 12px; }
+    .drop-title { font-size: 1.3rem; font-weight: 700; color: var(--text2); }
+    .drop-sub { font-size: 0.88rem; color: var(--text2); opacity: 0.6; margin-top: 6px; }
+    .drop-btn {
+      margin-top: 16px; background: var(--accent); color: #fff; border: none;
+      padding: 10px 28px; border-radius: 8px; font-size: 0.9rem;
+      font-weight: 600; cursor: pointer; font-family: inherit;
+    }
+
+    /* LOADING */
+    #loading {
+      position: absolute; inset: 0;
+      background: rgba(10,14,26,0.92);
+      display: none; flex-direction: column;
+      align-items: center; justify-content: center; gap: 20px; z-index: 20;
+    }
+    .spinner {
+      width: 48px; height: 48px;
+      border: 3px solid var(--border); border-top-color: var(--accent);
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { font-size: 0.95rem; color: var(--text2); }
+    .loading-sub  { font-size: 0.8rem; color: var(--text2); opacity: 0.5; }
+    .progress-bar-wrap {
+      width: 240px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;
+    }
+    .progress-bar { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s; width: 0%; }
+
+    /* TOOLBAR */
+    .toolbar {
+      position: absolute; top: 16px; right: 16px;
+      display: flex; flex-direction: column; gap: 8px; z-index: 5;
+    }
+    .tool-btn {
+      width: 38px; height: 38px; background: var(--card);
+      border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text2); font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; font-family: inherit;
+    }
+    .tool-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .tool-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* ERROR TOAST */
+    #toast {
+      position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%);
+      background: #1e1020; border: 1px solid var(--red);
+      color: var(--red); padding: 10px 20px; border-radius: 8px;
+      font-size: 0.85rem; z-index: 30; display: none;
+      max-width: 420px; text-align: center;
+    }
+
+    /* STATUS BAR */
+    .statusbar {
+      display: flex; align-items: center; gap: 16px;
+      padding: 8px 20px; background: var(--card);
+      border-top: 1px solid var(--border);
+      font-size: 0.75rem; color: var(--text2); flex-shrink: 0;
+    }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text3); display: inline-block; margin-right: 6px; }
+    .status-dot.green { background: var(--green); }
+    .status-dot.red   { background: var(--red); }
+
+    #file-input { display: none; }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Back</a>
+      <div class="topbar-title">IFC Viewer <span>|</span> BIM Portfolio</div>
+    </div>
+    <div class="topbar-right">
+      <div class="model-name" id="model-name-display">No model loaded</div>
+      <button class="load-btn" onclick="document.getElementById('file-input').click()">
+        <i class="fa-solid fa-folder-open"></i> Load IFC
+      </button>
+      <input type="file" id="file-input" accept=".ifc" />
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Model Info</div>
+        <div class="info-row"><span class="key">Status</span><span class="val" id="info-status">—</span></div>
+        <div class="info-row"><span class="key">Meshes</span><span class="val" id="info-elements">—</span></div>
+        <div class="info-row"><span class="key">File size</span><span class="val" id="info-size">—</span></div>
+        <div class="info-row"><span class="key">Format</span><span class="val">IFC 2x3 / IFC4</span></div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Controls</div>
+        <div class="control-item"><span class="kbd">🖱 Left</span><span class="control-desc">Rotate</span></div>
+        <div class="control-item"><span class="kbd">🖱 Right</span><span class="control-desc">Pan</span></div>
+        <div class="control-item"><span class="kbd">Scroll</span><span class="control-desc">Zoom</span></div>
+        <div class="control-item"><span class="kbd">F</span><span class="control-desc">Fit to view</span></div>
+        <div class="control-item"><span class="kbd">W</span><span class="control-desc">Wireframe</span></div>
+        <div class="control-item"><span class="kbd">R</span><span class="control-desc">Reset camera</span></div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Actions</div>
+        <div class="control-item" onclick="fitView()"><span class="kbd">F</span><span class="control-desc">Fit to View</span></div>
+        <div class="control-item" onclick="toggleWireframe()"><span class="kbd">W</span><span class="control-desc">Toggle Wireframe</span></div>
+        <div class="control-item" onclick="resetCamera()"><span class="kbd">R</span><span class="control-desc">Reset Camera</span></div>
+        <div class="control-item" onclick="toggleGrid()"><span class="kbd">G</span><span class="control-desc">Toggle Grid</span></div>
+      </div>
+    </div>
+
+    <!-- CANVAS WRAPPER -->
+    <div class="canvas-wrapper" id="canvas-wrapper">
+
+      <div id="drop-zone">
+        <div class="drop-box" id="drop-box" onclick="document.getElementById('file-input').click()">
+          <div class="drop-icon"><i class="fa-solid fa-cube"></i></div>
+          <div class="drop-title">Load IFC Model</div>
+          <div class="drop-sub">Drag & drop your .ifc file here</div>
+          <button class="drop-btn">Browse File</button>
+        </div>
+        <div class="drop-sub">Supports IFC 2x3 and IFC4 · Powered by web-ifc + Three.js</div>
+      </div>
+
+      <div id="loading">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loading-text">Initializing IFC engine...</div>
+        <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+        <div class="loading-sub" id="loading-sub">Please wait</div>
+      </div>
+
+      <div id="toast"></div>
+
+      <div class="toolbar">
+        <button class="tool-btn" title="Fit to view (F)" onclick="fitView()"><i class="fa-solid fa-expand"></i></button>
+        <button class="tool-btn" title="Wireframe (W)" id="btn-wire" onclick="toggleWireframe()"><i class="fa-solid fa-vector-square"></i></button>
+        <button class="tool-btn" title="Toggle Grid (G)" id="btn-grid" onclick="toggleGrid()"><i class="fa-solid fa-border-all"></i></button>
+        <button class="tool-btn" title="Reset camera (R)" onclick="resetCamera()"><i class="fa-solid fa-rotate"></i></button>
+      </div>
+
+      <canvas id="viewer-canvas"></canvas>
+    </div>
+  </div>
+
+  <!-- STATUS BAR -->
+  <div class="statusbar">
+    <span><span class="status-dot" id="status-dot"></span><span id="status-text">Ready — Load an IFC file to begin</span></span>
+    <span style="margin-left:auto" id="status-fps"></span>
+  </div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.152.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.152.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // ── Helpers ──
+    function setLoading(show, text='', sub='') {
+      document.getElementById('loading').style.display = show ? 'flex' : 'none';
+      if (text) document.getElementById('loading-text').textContent = text;
+      if (sub)  document.getElementById('loading-sub').textContent  = sub;
+    }
+    function setLoadingText(t) { document.getElementById('loading-text').textContent = t; }
+    function setProgress(p)    { document.getElementById('progress-bar').style.width = p + '%'; }
+    function setStatus(msg)    { document.getElementById('status-text').textContent = msg; }
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.style.display = 'block';
+      setTimeout(() => t.style.display = 'none', 7000);
+    }
+    function readFile(f) {
+      return new Promise((res, rej) => {
+        const r = new FileReader();
+        r.onload = e => res(e.target.result);
+        r.onerror = rej;
+        r.readAsArrayBuffer(f);
+      });
+    }
+
+    // ── Load web-ifc ──
+    setLoading(true, 'Loading IFC engine...', 'Initializing WASM...');
+    let IfcAPI = null;
+    try {
+      const mod = await import('https://cdn.jsdelivr.net/npm/web-ifc@0.0.51/web-ifc-api.js');
+      IfcAPI = mod.IfcAPI ?? mod.default?.IfcAPI ?? mod.default;
+      console.log('web-ifc module keys:', Object.keys(mod));
+      console.log('IfcAPI:', IfcAPI);
+      if (typeof IfcAPI !== 'function') throw new Error('IfcAPI is not a constructor. Keys: ' + Object.keys(mod).join(', '));
+      console.log('✓ web-ifc loaded');
+    } catch(e) {
+      console.error('web-ifc load failed:', e);
+      setLoading(false);
+      showToast('❌ IFC engine error: ' + e.message + ' — Check F12 Console');
+      setStatus('IFC engine failed — see F12 console');
+    }
+
+    // ── THREE.JS SCENE ──
+    const canvas   = document.getElementById('viewer-canvas');
+    const wrapper  = document.getElementById('canvas-wrapper');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x000000, 1);
+    renderer.shadowMap.enabled = true;
+
+    const scene  = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 10000);
+    camera.position.set(30, 20, 30);
+
+    const controls = new OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.07;
+
+    // Lights - bright enough to see model
+    scene.add(new THREE.AmbientLight(0xffffff, 2.5));
+    const sun = new THREE.DirectionalLight(0xffffff, 2.0);
+    sun.position.set(100, 200, 100);
+    scene.add(sun);
+    const fill = new THREE.DirectionalLight(0xffffff, 1.5);
+    fill.position.set(-100, 100, -100);
+    scene.add(fill);
+    const back = new THREE.DirectionalLight(0xffffff, 1.0);
+    back.position.set(0, -100, 0);
+    scene.add(back);
+
+    // Grid
+    const grid = new THREE.GridHelper(300, 50, 0x1e2740, 0x1e2740);
+    grid.visible = false;
+    scene.add(grid);
+    let gridVisible = false;
+
+    // Resize
+    function resize() {
+      const w = wrapper.clientWidth, h = wrapper.clientHeight;
+      renderer.setSize(w, h);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Animate loop
+    let fCount = 0, fTime = performance.now();
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+      fCount++;
+      if (performance.now() - fTime > 1000) {
+        document.getElementById('status-fps').textContent = fCount + ' fps';
+        fCount = 0; fTime = performance.now();
+      }
+    }
+    animate();
+
+    // ── IFC API ──
+    if (!IfcAPI) { setStatus('IFC engine not available'); }
+    const ifcAPI = IfcAPI ? new IfcAPI() : null;
+    if (ifcAPI) ifcAPI.SetWasmPath('/wasm/');
+
+    let ifcReady = false;
+    let modelGroup = null;
+    let isWireframe = false;
+    let modelCenter = new THREE.Vector3();
+    let modelRadius = 20;
+
+    // Init IFC
+    if (ifcAPI) ifcAPI.Init().then(async () => {
+      ifcReady = true;
+      // ── Auto-load IFC từ server ──
+      const params = new URLSearchParams(window.location.search);
+      const srcUrl = params.get('src') || '/models/250750_CC%20-%20LDK%20Amberfeild%20Stage%203.ifc';
+      await loadIFCFromUrl(srcUrl);
+    }).catch(err => {
+      setLoading(false);
+      showToast('⚠️ IFC engine failed: ' + err.message);
+      setStatus('IFC engine error');
+      console.error(err);
+    });
+
+    // ── LOAD IFC TỪ URL (server) ──
+    async function loadIFCFromUrl(url) {
+      const name = url.split('/').pop();
+      setLoading(true, 'Loading model from server...', name);
+      setProgress(10);
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status} — File not found: ${url}`);
+        setProgress(30);
+        setLoadingText('Parsing IFC data...');
+        const buffer = await res.arrayBuffer();
+        setProgress(50);
+        await processIFCBuffer(buffer, name, null);
+      } catch(err) {
+        console.error('loadIFCFromUrl error:', err);
+        showToast('❌ Cannot load from server: ' + err.message);
+        setStatus('Server load failed — try uploading manually');
+        setLoading(false);
+      }
+    }
+
+    // ── LOAD IFC TỪ FILE UPLOAD ──
+    window.loadIFC = async function(file) {
+      if (!ifcReady) { showToast('IFC engine not ready yet.'); return; }
+      setLoading(true, 'Reading file...', file.name);
+      setProgress(10);
+      const buffer = await readFile(file);
+      setProgress(30);
+      await processIFCBuffer(buffer, file.name, file.size);
+    };
+
+    // ── HÀM XỬ LÝ IFC BUFFER (dùng chung cho cả URL và file upload) ──
+    async function processIFCBuffer(buffer, name, fileSize) {
+      try {
+        setLoadingText('Opening model...');
+        const modelID = ifcAPI.OpenModel(
+          new Uint8Array(buffer),
+          { COORDINATE_TO_ORIGIN: true, USE_FAST_BOOLS: false }
+        );
+        setProgress(50);
+        setLoadingText('Building 3D geometry...');
+
+        if (modelGroup) { scene.remove(modelGroup); modelGroup = null; }
+
+        const group = new THREE.Group();
+        let meshCount = 0;
+
+        ifcAPI.StreamAllMeshes(modelID, (mesh) => {
+          const geometries = mesh.geometries;
+          const size = geometries.size();
+          for (let i = 0; i < size; i++) {
+            const pg       = geometries.get(i);
+            const geomData = ifcAPI.GetGeometry(modelID, pg.geometryExpressID);
+            const verts    = ifcAPI.GetVertexArray(geomData.GetVertexData(), geomData.GetVertexDataSize());
+            const indices  = ifcAPI.GetIndexArray(geomData.GetIndexData(), geomData.GetIndexDataSize());
+
+            if (verts.length === 0 || indices.length === 0) { geomData.delete(); continue; }
+
+            const positions = new Float32Array(verts.length / 2);
+            const normals   = new Float32Array(verts.length / 2);
+            for (let j = 0; j < verts.length; j += 6) {
+              const k = (j / 6) * 3;
+              positions[k]   = verts[j];   positions[k+1] = verts[j+1]; positions[k+2] = verts[j+2];
+              normals[k]     = verts[j+3]; normals[k+1]   = verts[j+4]; normals[k+2]   = verts[j+5];
+            }
+
+            const bufGeo = new THREE.BufferGeometry();
+            bufGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            bufGeo.setAttribute('normal',   new THREE.BufferAttribute(normals, 3));
+            bufGeo.setIndex(new THREE.BufferAttribute(indices, 1));
+
+            const c     = pg.color;
+            const color = new THREE.Color().setRGB(c.x, c.y, c.z, THREE.LinearSRGBColorSpace);
+            const opacity = (c.w > 0) ? Math.max(c.w, 0.4) : 1.0;
+
+            const mat = new THREE.MeshStandardMaterial({
+              color, side: THREE.DoubleSide,
+              transparent: opacity < 0.99, opacity,
+              roughness: 0.5, metalness: 0.1,
+            });
+
+            const m = pg.flatTransformation;
+            const threeMesh = new THREE.Mesh(bufGeo, mat);
+            threeMesh.applyMatrix4(new THREE.Matrix4().fromArray([
+              m[0],m[1],m[2],m[3], m[4],m[5],m[6],m[7],
+              m[8],m[9],m[10],m[11], m[12],m[13],m[14],m[15]
+            ]));
+            group.add(threeMesh);
+            meshCount++;
+            geomData.delete();
+          }
+        });
+
+        setProgress(85);
+        setLoadingText('Finalizing...');
+        ifcAPI.CloseModel(modelID);
+        scene.add(group);
+        modelGroup = group;
+
+        const box = new THREE.Box3().setFromObject(group);
+        box.getCenter(modelCenter);
+        modelRadius = box.getSize(new THREE.Vector3()).length() * 0.5;
+        fitView();
+
+        const sizeMB = fileSize ? (fileSize / 1024 / 1024).toFixed(2) : (buffer.byteLength / 1024 / 1024).toFixed(2);
+        document.getElementById('info-elements').textContent = meshCount.toLocaleString();
+        document.getElementById('info-size').textContent     = sizeMB + ' MB';
+        document.getElementById('info-status').textContent   = 'Loaded ✓';
+        document.getElementById('info-status').className     = 'val green';
+        document.getElementById('model-name-display').textContent = name;
+        document.getElementById('drop-zone').classList.add('hidden');
+        document.getElementById('status-dot').className      = 'status-dot green';
+        setStatus('Loaded: ' + name + '  |  ' + meshCount.toLocaleString() + ' meshes');
+        setProgress(100);
+
+      } catch (err) {
+        console.error('IFC Error:', err);
+        showToast('Error: ' + err.message);
+        document.getElementById('info-status').textContent = 'Error';
+        document.getElementById('info-status').className   = 'val red';
+        document.getElementById('status-dot').className    = 'status-dot red';
+        setStatus('Failed — check F12 console');
+      }
+      setLoading(false);
+    };
+
+    // ── CAMERA CONTROLS ──
+    window.fitView = function() {
+      if (!modelGroup) return;
+      const offset = modelRadius * 2.2;
+      camera.position.set(
+        modelCenter.x + offset,
+        modelCenter.y + offset * 0.6,
+        modelCenter.z + offset
+      );
+      controls.target.copy(modelCenter);
+      controls.update();
+    };
+
+    window.resetCamera = function() {
+      camera.position.set(30, 20, 30);
+      controls.target.set(0, 0, 0);
+      controls.update();
+    };
+
+    window.toggleWireframe = function() {
+      if (!modelGroup) return;
+      isWireframe = !isWireframe;
+      modelGroup.traverse(c => { if (c.isMesh) c.material.wireframe = isWireframe; });
+      document.getElementById('btn-wire').classList.toggle('active', isWireframe);
+    };
+
+    window.toggleGrid = function() {
+      gridVisible = !gridVisible;
+      grid.visible = gridVisible;
+      document.getElementById('btn-grid').classList.toggle('active', !gridVisible);
+    };
+
+    // Keyboard
+    document.addEventListener('keydown', e => {
+      if (e.key === 'f' || e.key === 'F') window.fitView();
+      if (e.key === 'r' || e.key === 'R') window.resetCamera();
+      if (e.key === 'w' || e.key === 'W') window.toggleWireframe();
+      if (e.key === 'g' || e.key === 'G') window.toggleGrid();
+    });
+
+    // ── FILE INPUT ──
+    document.getElementById('file-input').addEventListener('change', e => {
+      if (e.target.files[0]) window.loadIFC(e.target.files[0]);
+    });
+
+    // Drag & drop
+    const dropBox = document.getElementById('drop-box');
+    dropBox.addEventListener('dragover',  e => { e.preventDefault(); dropBox.classList.add('dragover'); });
+    dropBox.addEventListener('dragleave', () => dropBox.classList.remove('dragover'));
+    dropBox.addEventListener('drop', e => {
+      e.preventDefault(); dropBox.classList.remove('dragover');
+      const f = e.dataTransfer.files[0];
+      if (f?.name.endsWith('.ifc')) window.loadIFC(f);
+    });
+    document.addEventListener('dragover', e => e.preventDefault());
+    document.addEventListener('drop', e => {
+      e.preventDefault();
+      const f = e.dataTransfer.files[0];
+      if (f?.name.endsWith('.ifc')) window.loadIFC(f);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+# Large files
+models/
+*.wmv
+images/*.pdf
+wasm/
+
+# Server binary
+bin/
+obj/
+*.exe
+*.dll
+.vs/
