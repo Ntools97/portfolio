@@ -1042,14 +1042,14 @@ ul { list-style: none; }
 .tool-logo.csharp  { background: #1a0a2e; }
 .tool-logo.vs      { background: #1a0a2e; }
 .tool-logo.api     { background: #0d2137; }
-.tool-logo.archicad { background: transparent; padding: 0; width: 52px; height: 52px; }
+.tool-logo.archicad { background: transparent; padding: 2px; }
 .tool-logo.trimble  { background: transparent; padding: 0; }
 .tool-logo.ifc     { background: #0a1f14; color: #10b981; }
 .tool-logo.excel   { background: #0a1a0a; color: #22c55e; }
 
 .tool-logo img {
-  width: 28px;
-  height: 28px;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   display: block;
   margin: auto;
