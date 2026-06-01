@@ -35,22 +35,27 @@
     <div class="hero-bg">
       <div class="grid-overlay"></div>
     </div>
-    <div class="hero-content">
-      <p class="hero-greeting">Hello, I'm</p>
-      <h1 class="hero-name">Tran Minh Nhat</h1>
-      <div class="hero-roles">
-          <span class="role active">BIM Structural Modeler</span>
-        <span class="role">Precast Specialist</span>
-        <span class="role">Revit Developer</span>
-        <span class="role">BIM Automation</span>
+    <div class="hero-layout">
+      <div class="hero-photo">
+        <img src="images/Picture of me.jpg" alt="Tran Minh Nhat" />
       </div>
-      <p class="hero-desc">
-        Specializing in BIM Structural Modeling, Precast Concrete Shopdrawing,<br />
-        and custom Revit API development with C#.
-      </p>
-      <div class="hero-btns">
-        <a href="#projects" class="btn btn-primary">View Projects</a>
-        <a href="#contact" class="btn btn-outline">Contact Me</a>
+      <div class="hero-content">
+        <p class="hero-greeting">Hello, I'm</p>
+        <h1 class="hero-name">Tran Minh Nhat</h1>
+        <div class="hero-roles">
+          <span class="role active">BIM Structural Modeler</span>
+          <span class="role">Precast Specialist</span>
+          <span class="role">Revit Developer</span>
+          <span class="role">BIM Automation</span>
+        </div>
+        <p class="hero-desc">
+          Specializing in BIM Structural Modeling, Precast Concrete Shopdrawing,<br />
+          and custom Revit API development with C#.
+        </p>
+        <div class="hero-btns">
+          <a href="#projects" class="btn btn-primary">View Projects</a>
+          <a href="#contact" class="btn btn-outline">Contact Me</a>
+        </div>
       </div>
     </div>
   </section>
@@ -185,7 +190,7 @@
           </p>
           <div class="about-stats">
             <div class="stat">
-              <span class="stat-num">2+</span>
+              <span class="stat-num">6+</span>
               <span class="stat-label">Years Experience</span>
             </div>
             <div class="stat">
@@ -246,11 +251,12 @@
 
         <div class="skill-card">
           <h3>Revit API Development</h3>
-          <p>Custom plugin development using C# and Revit API to solve real engineering problems.</p>
+          <p>Currently learning and developing custom plugins using C# and the Revit API to address practical engineering and BIM challenges.</p>
           <ul>
             <li>Custom commands & add-ins</li>
             <li>Automated dimensioning tools</li>
             <li>Data export to Excel / IFC</li>
+            <li>Applying AI-driven tools to engineering and BIM processes to assist with data validation, workflow automation, error reduction, and quality improvement</li>
           </ul>
         </div>
 
@@ -270,6 +276,49 @@
         <button class="filter-btn" data-filter="dev">Dev / Tools</button>
       </div>
       <div class="projects-grid">
+
+        <!-- LDK Amberfield Stage 3 -->
+        <!-- AirTrunk SYD3 -->
+        <div class="project-card" data-cat="precast bim">
+          <div class="project-slideshow">
+            <div class="slides">
+              <img src="images/SYD3 - 1.jpg" class="slide active" alt="SYD3 1" />
+              <img src="images/SYD3 - 2.jpg" class="slide" alt="SYD3 2" />
+              <img src="images/SYD3 - 3.jpg" class="slide" alt="SYD3 3" />
+              <img src="images/SYD3 - 4.jpg" class="slide" alt="SYD3 4" />
+              <img src="images/SYD3 - 5.jpg" class="slide" alt="SYD3 5" />
+              <img src="images/SYD3 - 6.jpg" class="slide" alt="SYD3 6" />
+              <img src="images/SYD3 - 7.jpg" class="slide" alt="SYD3 7" />
+            </div>
+            <button class="slide-btn prev"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="slide-btn next"><i class="fa-solid fa-chevron-right"></i></button>
+            <div class="slide-dots">
+              <span class="dot active"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+            <div class="project-tags">
+              <span class="tag precast">Precast</span>
+              <span class="tag bim">BIM</span>
+            </div>
+          </div>
+          <div class="project-info">
+            <h3>AirTrunk SYD3 — Hyperscale Data Center</h3>
+            <p>AirTrunk SYD3 is a massive 320+ megawatt hyperscale data center located at 51 Huntingwood Drive, Western Sydney — one of the largest data centers in the Asia-Pacific region, designed to support major cloud, content, and large enterprise customers.</p>
+            <p>Responsible for BIM modeling, shop drawing production, and technical coordination for the precast concrete package. This was a highly complex project with a high level of technical detailing and coordination requirements. Scope covered SYD3 Shell A, including detailed shop drawings for approximately 500 precast wall panels and 200 precast columns.</p>
+            <p>Key responsibilities included coordinating precast elements across disciplines, ensuring constructability and installation accuracy, developing the temporary propping strategy, managing and resolving technical clashes through BIM coordination, and coordinating closely with the structural steel team to complete the roof structure and ensure proper interface between precast and steel elements.</p>
+            <div class="project-meta">
+              <span><i class="fa-solid fa-wrench"></i> Revit · IFC</span>
+              <span><i class="fa-solid fa-location-dot"></i> Huntingwood, Western Sydney, NSW</span>
+              <span><i class="fa-solid fa-layer-group"></i> 500 Panels · 200 Columns · Shell A</span>
+              <span><i class="fa-solid fa-diagram-project"></i> BIM Modeling · Shop Drawing · Steel Coordination · Propping Design</span>
+            </div>
+          </div>
+        </div>
 
         <!-- LDK Amberfield Stage 3 -->
         <div class="project-card" data-cat="precast bim">
@@ -398,8 +447,8 @@
             </div>
           </div>
           <div class="project-info">
-            <h3>Wall & Column from CAD Tool</h3>
-            <p>Custom Revit add-in (C#) that automatically generates Walls and Columns from a linked CAD file. Supports level-based elevation adjustment for flexible, multi-storey workflows.</p>
+            <h3>CAD-to-Revit Wall & Column Generator</h3>
+            <p>Custom Revit add-in built with C# that automatically creates Walls and Columns from linked CAD files. Features level-aware elevation control, enabling flexible modeling workflows across multiple floors while reducing manual modeling effort and improving BIM productivity.</p>
             <div class="project-meta">
               <span><i class="fa-solid fa-code"></i> C# · Revit API</span>
               <span><i class="fa-solid fa-bolt"></i> Automation</span>
@@ -408,25 +457,74 @@
           </div>
         </div>
 
-
-        <!-- Coming Soon -->
-        <div class="project-card" data-cat="bim">
-          <div class="project-slideshow no-img">
-            <div class="project-placeholder bim-bg">
-              <i class="fa-solid fa-building"></i>
+        <!-- Element Parameter Assigner -->
+        <div class="project-card" data-cat="dev">
+          <div class="project-video-wrap">
+            <video class="project-video" src="videos/GanThongTin - Trim.mp4" muted playsinline preload="metadata"></video>
+            <div class="video-overlay">
+              <button class="play-btn"><i class="fa-solid fa-play"></i></button>
             </div>
             <div class="project-tags">
-              <span class="tag bim">BIM</span>
+              <span class="tag dev">Plugin</span>
             </div>
           </div>
           <div class="project-info">
-            <h3>Project — Coming Soon</h3>
-            <p>More featured projects will be added here. Stay tuned for updates.</p>
+            <h3>Element Parameter Assigner</h3>
+            <p>Custom Revit add-in that rapidly assigns parameters to all walls or columns by scanning elements within a selected area. Eliminates manual parameter entry and significantly speeds up data population workflows across large models.</p>
             <div class="project-meta">
-              <span><i class="fa-solid fa-clock"></i> Updating...</span>
+              <span><i class="fa-solid fa-code"></i> C# · Revit API</span>
+              <span><i class="fa-solid fa-bolt"></i> Automation</span>
+              <span><i class="fa-solid fa-tag"></i> Parameter Management</span>
             </div>
           </div>
         </div>
+
+        <!-- Rebar Generator Tool -->
+        <div class="project-card" data-cat="dev">
+          <div class="project-video-wrap">
+            <video class="project-video" src="videos/rebar-tool.mp4" muted playsinline preload="metadata"></video>
+            <div class="video-overlay">
+              <button class="play-btn"><i class="fa-solid fa-play"></i></button>
+            </div>
+            <div class="project-tags">
+              <span class="tag dev">Plugin</span>
+              <span class="tag precast">In Development</span>
+            </div>
+          </div>
+          <div class="project-info">
+            <h3>Column Rebar Generator</h3>
+            <p>Currently in development. A Revit add-in that automatically assigns rebar to columns with fully customizable sizing parameters. Designed to significantly reduce the time required for column rebar configuration and improve consistency across the model.</p>
+            <div class="project-meta">
+              <span><i class="fa-solid fa-code"></i> C# · Revit API</span>
+              <span><i class="fa-solid fa-circle-notch"></i> In Development</span>
+              <span><i class="fa-solid fa-cubes"></i> Structural Rebar</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- IFA & IFC Drawing Filter -->
+        <div class="project-card" data-cat="dev">
+          <div class="project-video-wrap">
+            <video class="project-video" src="videos/IFA&IFC - Trim.mp4" muted playsinline preload="metadata"></video>
+            <div class="video-overlay">
+              <button class="play-btn"><i class="fa-solid fa-play"></i></button>
+            </div>
+            <div class="project-tags">
+              <span class="tag dev">Plugin</span>
+            </div>
+          </div>
+          <div class="project-info">
+            <h3>IFA & IFC Drawing Filter</h3>
+            <p>A custom tool designed to filter and manage IFA (Issued for Approval) and IFC (Issued for Construction) drawing sets. Provides efficient control over drawing status tracking and document management within BIM workflows.</p>
+            <div class="project-meta">
+              <span><i class="fa-solid fa-code"></i> C# · Revit API</span>
+              <span><i class="fa-solid fa-filter"></i> Drawing Management</span>
+              <span><i class="fa-solid fa-file-lines"></i> IFA · IFC</span>
+            </div>
+          </div>
+        </div>
+
+
 
       </div>
     </div>
