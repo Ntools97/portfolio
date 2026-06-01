@@ -908,9 +908,81 @@ ul { list-style: none; }
 }
 
 /* ═══════════════════════════════════════
-   TOOLS & DEV
+   TOOLS & DEV — BADGES
 ═══════════════════════════════════════ */
 .tools-section { background: var(--bg); }
+
+.badge-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.badge-group-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text2);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.badge-group-title i { color: var(--accent); }
+
+.badge-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.skill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+  cursor: default;
+}
+
+.skill-badge em {
+  font-style: normal;
+  font-size: 0.75rem;
+  font-weight: 500;
+  opacity: 0.7;
+  padding-left: 4px;
+  border-left: 1px solid currentColor;
+  margin-left: 2px;
+}
+
+.skill-badge.bim {
+  background: rgba(79,142,247,0.1);
+  color: var(--accent);
+  border-color: rgba(79,142,247,0.3);
+}
+
+.skill-badge.dev {
+  background: rgba(245,158,11,0.1);
+  color: var(--dev);
+  border-color: rgba(245,158,11,0.3);
+}
+
+.skill-badge.workflow {
+  background: rgba(16,185,129,0.1);
+  color: var(--precast);
+  border-color: rgba(16,185,129,0.3);
+}
+
+.skill-badge:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.2);
+}
 
 .tools-grid {
   display: grid;
@@ -940,9 +1012,11 @@ ul { list-style: none; }
 .tool-items { display: flex; flex-direction: column; gap: 22px; }
 
 .tool-item {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  grid-template-rows: auto auto;
+  gap: 4px 14px;
+  align-items: center;
 }
 
 .tool-logo {
@@ -961,13 +1035,15 @@ ul { list-style: none; }
 }
 
 .tool-logo.revit   { background: #0d2137; }
-.tool-logo.tekla   { background: #e8f4f8; }
+.tool-logo.tekla   { background: #fff; padding: 4px; }
+.tool-logo.archicad { background: transparent; padding: 0; }
 .tool-logo.navis   { background: #2a0a0a; }
 .tool-logo.autocad { background: #1a0005; }
 .tool-logo.csharp  { background: #1a0a2e; }
 .tool-logo.vs      { background: #1a0a2e; }
 .tool-logo.api     { background: #0d2137; }
-.tool-logo.archicad { background: transparent; padding: 0; }
+.tool-logo.archicad { background: transparent; padding: 0; width: 52px; height: 52px; }
+.tool-logo.trimble  { background: transparent; padding: 0; }
 .tool-logo.ifc     { background: #0a1f14; color: #10b981; }
 .tool-logo.excel   { background: #0a1a0a; color: #22c55e; }
 
